@@ -1,0 +1,55 @@
+<%- include("layout", { body: `
+<section class="dashboard-card">
+  <h2>🧑‍💼 HR Resume Matcher</h2>
+
+  <form action="/hr/match" method="POST" enctype="multipart/form-data" class="form-box">
+    <div class="form-group">
+      <label>Upload Resumes (PDF/DOCX)</label>
+      <input type="file" name="resumes" class="input" multiple required />
+    </div>
+
+    <div class="form-group">
+      <label>Paste Job Description</label>
+      <textarea name="jd" rows="8" placeholder="Paste JD..." class="input" required></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary">⚡ Match & Rank</button>
+  </form>
+
+  ${results ? (
+    results.error
+      ? `<div class="alert error">${results.error}</div>`
+      : `
+    <div class="analysis-result">
+      <h3>🏆 Ranked Candidates</h3>
+      <p><b>Top Recommendation:</b> <span class="highlight">${results.top_recommendation || "—"}</span></p>
+
+      <div class="table-wrap">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Resume</th>
+              <th>Score (%)</th>
+              <th>Covered Keywords</th>
+              <th>Missing Keywords</th>
+              <th>Strengths</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${results.candidates.map((c, i) => `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${c.name}</td>
+                <td><span class="score">${Number(c.score).toFixed(2)}</span></td>
+                <td>${(c.covered_keywords || []).slice(0,8).join(", ")}</td>
+                <td>${(c.missing_keywords || []).slice(0,8).join(", ")}</td>
+                <td>${(c.strengths || []).join(", ")}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `) : "" }
+</section>
+` }) %>

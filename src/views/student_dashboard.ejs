@@ -1,0 +1,39 @@
+<%- include("layout", { body: `
+<section class="dashboard-card">
+  <h2>🎓 Student Resume Analyzer</h2>
+
+  <form action="/student/match" method="POST" enctype="multipart/form-data" class="form-box">
+    <div class="form-group">
+      <label>Upload Resume (PDF/DOCX)</label>
+      <input type="file" name="resume" class="input" required />
+    </div>
+
+    <div class="form-group">
+      <label>Paste Job Description</label>
+      <textarea name="jd" rows="8" placeholder="Paste JD..." class="input" required></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary">🚀 Analyze Resume</button>
+  </form>
+
+  ${result ? (
+    result.error
+      ? `<div class="alert error">${result.error}</div>`
+      : `
+    <div class="analysis-result">
+      <h3>📊 Results</h3>
+      <p><b>Match Score:</b> <span class="score">${Number(result.score).toFixed(2)}%</span></p>
+      <p><b>Skill Coverage:</b> ${result.skill_coverage?.coverage_percent || 0}% of required skills</p>
+      <p><b>✅ Covered Keywords:</b> ${result.covered_keywords?.slice(0,10).join(", ") || "—"}</p>
+      <p><b>❌ Missing Keywords:</b> ${result.missing_keywords?.slice(0,10).join(", ") || "—"}</p>
+
+      <div class="suggestions">
+        <h4>💡 Suggestions</h4>
+        <ul>
+          ${(result.suggestions || []).map(s => `<li>${s}</li>`).join("")}
+        </ul>
+      </div>
+    </div>
+  `) : "" }
+</section>
+` }) %>
